@@ -1,0 +1,18 @@
+name: comment weather
+
+on:
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  weather:
+    runs-on: ubuntu-latest
+    steps:
+      - name: comment weather
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          export body=$(curl 'https://api.open-meteo.com/v1/forecast?latitude=24.85&longitude=46.71&current_weather=true')
+          export temp=$(echo $body | jq '.current_weather.temperature')
+          gh pr comment $PR_NUMBER --body "the temperature in Riyadh is $temp" --repo $GITHUB_REPOSITORY
